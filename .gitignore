@@ -1,0 +1,9 @@
+# Arquivo .gitignore para projetos Node.js
+
+# Ignorar o diretório node_modules
+node_modules/
+
+# Outros arquivos ou diretórios que você deseja ignorar
+# Exemplo:
+# logs/
+# .env
