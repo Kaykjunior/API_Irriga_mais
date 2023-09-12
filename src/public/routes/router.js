@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { enviarComando } = require('../../controller/serial')
 const Connection = require('../../Connection/index')
-const http = require('http');
+
 // Definindo uma rota simples
 const rotas =
   router.post('/', (req, res) => {
@@ -59,14 +59,13 @@ router.get('/hora-register', (req, res) => {
 //SELECT id, umidade FROM 24horas WHERE id >= ? OR id < ? ORDER BY CASE WHEN id >= ? THEN 1 ELSE 2 END, id;
 
 
-router.get('/listen-config', (req, res) => {
-  Connection.query('select * from presets;',
-    function (err, results, fields) {
-      console.log(results); // results contains rows returned by server
-      res.status(200).json({ results })
-    }
-  )
+router.get('/ligar', (req, res) => {
+  enviarComando('ligar\n')
+  res.status(200).json({ status: "Enviado com sucesso" })
 })
-
+router.get('/desligar', (req, res) => {
+  enviarComando('desligar\n')
+  res.status(200).json({ status: "Enviado com sucesso" })
+})
 // Exportando o objeto de roteador
 module.exports = rotas;

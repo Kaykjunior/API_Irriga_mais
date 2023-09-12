@@ -28,24 +28,35 @@ const HandleRegister = (server) => {
         var enc = new TextDecoder();
         var arr = new Uint8Array(data);
         var ready = enc.decode(arr);
-        var umidadeValue = parseInt(ready.match(/\d+/)[0]);
-        var umidadePercent = 100 - ((umidadeValue - 429) / (1024 - 429)) * 100;
-        umidadePercent = Math.max(0, Math.min(100, umidadePercent));
-        umidadePercent = Math.round(umidadePercent);
 
-        // Buscar os dados de umidade ideais, mínimos e máximos do banco de dados
-        const query = "SELECT umidade_ideal, umidade_min, umidade_max, planta FROM presets WHERE id_preset = 1";
-        Connection.query(query, async function (error, results) {
-            if (error) {
-                console.error('Erro ao buscar dados de umidade:', error);
-                return;
-            }
-            const umidadeIdeal = results[0].umidade_ideal;
-            const umidadeMin = results[0].umidade_min;
-            const umidadeMax = results[0].umidade_max;
-            // ... (restante do código)
 
-        });
+
+        var match = ready.match(/\d+/);
+        if (match !== null) {
+            var umidadeValue = parseInt(match[0]);
+            // Resto do seu código
+
+            var umidadeValue = parseInt(ready.match(/\d+/)[0]);
+            var umidadePercent = 100 - ((umidadeValue - 429) / (1024 - 429)) * 100;
+            umidadePercent = Math.max(0, Math.min(100, umidadePercent));
+            umidadePercent = Math.round(umidadePercent);
+
+            // Buscar os dados de umidade ideais, mínimos e máximos do banco de dados
+            const query = "SELECT umidade_ideal, umidade_min, umidade_max, planta FROM presets WHERE id_preset = 1";
+            Connection.query(query, async function (error, results) {
+                if (error) {
+                    console.error('Erro ao buscar dados de umidade:', error);
+                    return;
+                }
+                const umidadeIdeal = results[0].umidade_ideal;
+                const umidadeMin = results[0].umidade_min;
+                const umidadeMax = results[0].umidade_max;
+                // ... (restante do código)
+
+            });
+        } else {
+            console.log('Nenhum dígito encontrado em "ready".');
+        }
 
         io.emit('umidade', umidadePercent);
 
