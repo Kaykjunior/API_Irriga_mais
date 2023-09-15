@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { enviarComando } = require('../../controller/serial')
+const { enviarComando, handleModo } = require('../../controller/serial')
 const Connection = require('../../Connection/index')
 
 // Definindo uma rota simples
@@ -67,5 +67,43 @@ router.get('/desligar', (req, res) => {
   enviarComando('desligar\n')
   res.status(200).json({ status: "Enviado com sucesso" })
 })
+
+router.get('/reservatorio', async (req, res) => {
+  try {
+    Connection.query(`select * from reservatorio`,
+      function (err, results, fields) {
+        const data = results
+        console.log(results); // results contains rows returned by server
+        const porcentagemGasta = data[0].quantidade_gasta / data[0].capacidade_total * 100
+        const porcentagemRestante = data[0].quantidade_disponivel / data[0].capacidade_total * 100
+        res.status(200).json({ gasta: porcentagemGasta.toFixed(2), disponivel: porcentagemRestante.toFixed(2) })
+      })
+  } catch (error) {
+    console.error('Erro ao buscar dados do reservatório:', error);
+    res.status(500).json({ error: 'Erro ao buscar dados do reservatório' });
+  }
+});
+
+router.get('/presets', async (req, res) => {
+  try {
+    Connection.query(`select * from presets`,
+      function (err, results, fields) {
+        const data = results
+        console.log(results); // results contains rows returned by server
+        res.status(200).json({ data })
+      })
+  } catch (error) {
+    console.error('Erro ao buscar dados do reservatório:', error);
+    res.status(500).json({ error: 'Erro ao buscar dados do reservatório' });
+  }
+});
+
+router.post('/set-modo', (req, res) => {
+  const { modo } = req.body;
+  handleModo(modo, res);
+});
+
+
+
 // Exportando o objeto de roteador
 module.exports = rotas;
